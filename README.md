@@ -1,2 +1,2 @@
-# xschema
+# Xchema
 Schema validation for Elixir

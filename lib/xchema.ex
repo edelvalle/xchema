@@ -16,7 +16,7 @@ defmodule Xchema do
   end
 
   def validate(schema, data) do
-    schema.module_info(:functions)
+    result = schema.module_info(:functions)
     |> Keyword.keys()
     |> Enum.uniq()
     |> Enum.reject(&(&1 in [:__info__, :module_info, :validate]))
@@ -24,13 +24,20 @@ defmodule Xchema do
     |> Enum.reject(fn ({_name, info}) -> info[:read_only] end)
     |> Enum.map(fn ({name, info}) -> validate_field(name, info, data) end)
     |> Enum.map(&validate_in_schema(schema, &1))
+    |> Enum.group_by(
+        fn ({ok?, _name, _value}) -> ok? end,
+        fn ({_ok?, name, value}) -> {name, value} end
+      )
+
+    ok? = if Map.has_key?(result, :error) do :error else :ok end
+    {ok?, Map.new(result[:error] || result[:ok])}
   end
 
   def validate_field(name, info, data) do
     value = data[name] || :empty
     type = info[:type]
     required = Keyword.get info, :required, true
-    allow_nil = Keyword.get info, :allow_nil, false
+    allow_nil = Keyword.get info, :allow_nil, not required
     allow_blank = Keyword.get info, :allow_blank, false
     default = info[:default] || :empty
 

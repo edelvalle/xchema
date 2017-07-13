@@ -10,7 +10,12 @@ defmodule Xchema.Mixfile do
       deps: deps(),
       package: package(),
       test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [coveralls: :test]
+      preferred_cli_env: [
+        "coveralls": :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test,
+      ],
     ]
   end
 
@@ -32,6 +37,7 @@ defmodule Xchema.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [
+      {:excoveralls, "~> 0.7", only: :test}
     ]
   end
 

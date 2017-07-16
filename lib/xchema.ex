@@ -15,11 +15,20 @@ defmodule Xchema do
     end
   end
 
+  @fields_to_exclude [
+    :__info__,
+    :module_info,
+    :valid?,
+    :validate
+  ]
+
   def validate(schema, data) do
-    result = schema.module_info(:functions)
+    schema_functions = schema.module_info(:functions)
     |> Keyword.keys()
     |> Enum.uniq()
-    |> Enum.reject(&(&1 in [:__info__, :module_info, :validate]))
+
+    result = schema_functions
+    |> Enum.reject(&(&1 in @fields_to_exclude))
     |> Enum.map(fn (member) -> {member, apply(schema, member, [])} end)
     |> Enum.reject(fn ({_name, info}) -> info[:read_only] end)
     |> Enum.map(fn ({name, info}) -> validate_field(name, info, data) end)
@@ -30,7 +39,13 @@ defmodule Xchema do
       )
 
     ok? = if Map.has_key?(result, :error) do :error else :ok end
-    {ok?, Map.new(result[:error] || result[:ok])}
+    almost_ready = Map.new(result[:error] || result[:ok])
+
+    if ok? == :ok and :valid? in schema_functions do
+      schema.valid? almost_ready
+    else
+      {ok?, almost_ready}
+    end
   end
 
   def validate_field(name, info, data) do

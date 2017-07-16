@@ -20,6 +20,15 @@ defmodule DSLPerson do
   field :age, type: :integer
 
   field :is_married, type: :boolean, required: false
+
+  def valid?(data) do
+    case data do
+      %{name: "Coco", is_married: true} -> {:error, "Coco can't be married"}
+      _ -> {:ok, data}
+    end
+  end
+
+
 end
 
 defmodule Xchema.Test.DSL do
@@ -48,6 +57,11 @@ defmodule Xchema.Test.DSL do
   test "When a int is passed in a boolean field it complains" do
     result = DSLPerson.validate %{age: 3, is_married: 1}
     assert result == {:error, %{is_married: "Value '1' is not a valid boolean"}}
+  end
+
+  test "Coco can't be married" do
+    result = DSLPerson.validate %{age: 3, name: "Coco", is_married: true}
+    assert result == {:error, "Coco can't be married"}
   end
 
   test "Test using strings as keys" do

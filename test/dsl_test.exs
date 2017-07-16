@@ -8,6 +8,8 @@ defmodule DSLPerson do
     allow_blank: true,
     default: "Alex",
   ]
+  field :age, type: :integer
+  field :is_married, type: :boolean, required: false
 
   def name(:valid?, value) do
     if value == "invalid name" do
@@ -17,17 +19,12 @@ defmodule DSLPerson do
     end
   end
 
-  field :age, type: :integer
-
-  field :is_married, type: :boolean, required: false
-
   def valid?(data) do
     case data do
       %{name: "Coco", is_married: true} -> {:error, "Coco can't be married"}
       _ -> {:ok, data}
     end
   end
-
 
 end
 

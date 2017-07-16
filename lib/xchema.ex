@@ -34,7 +34,7 @@ defmodule Xchema do
   end
 
   def validate_field(name, info, data) do
-    value = data[name] || :empty
+    value = data[Atom.to_string(name)] || data[name] || :empty
     type = info[:type]
     required = Keyword.get info, :required, true
     allow_nil = Keyword.get info, :allow_nil, not required

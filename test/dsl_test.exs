@@ -50,6 +50,10 @@ defmodule Xchema.Test.DSL do
     assert result == {:error, %{is_married: "Value '1' is not a valid boolean"}}
   end
 
+  test "Test using strings as keys" do
+    result = DSLPerson.validate %{"age" => 3, "name" => "Alex", "is_married": true}
+    assert result == {:ok, %{age: 3, name: "Alex", is_married: true}}
+  end
 end
 
 

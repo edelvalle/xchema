@@ -9,9 +9,9 @@ defmodule EnergyConsumtion do
   def average(:get, obj) do
     consumption_length = length(obj[:consumption])
     if consumption_length > 0 do
-        Enum.sum(obj[:consumption]) / length(obj[:consumption])
+      Enum.sum(obj[:consumption]) / length(obj[:consumption])
     else
-        0
+      0
     end
   end
 
@@ -23,13 +23,13 @@ defmodule Xchema.Test.Serialization do
 
   test "A consumption object van be serialized" do
     result = EnergyConsumtion.serialize %{
-        date: %{year: 2017},
-        consumption: [2, 5, 10]
+      date: %{year: 2017},
+      consumption: [2, 5, 10]
     }
     assert result == %{
-        year: 2017,
-        consumption: [2, 5, 10],
-        average: 5.666666666666667,
+      year: 2017,
+      consumption: [2, 5, 10],
+      average: 5.666666666666667,
     }
   end
 
